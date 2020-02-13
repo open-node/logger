@@ -53,6 +53,7 @@ function Logger({ errorLogPath, infoLogPath }) {
    * @param {boolean} [isAsync=true] 是否是异步函数
    * @param {function} [transform] 返回值记录的tans 函数
    * @param {function} [errorHandler] 错误信息处理函数
+   * @param {function} [argsHandler] 参数信息处理函数
    *
    * @return {function}
    */
@@ -61,13 +62,14 @@ function Logger({ errorLogPath, infoLogPath }) {
     name,
     isAsync = true,
     transform = x => x,
-    errorHandler = e => e.message
+    errorHandler = e => e.message,
+    argsHandler = JSON.stringify
   ) => {
     if (isAsync) {
       return async (...args) => {
         const callId = uuidv4();
         try {
-          info(`Begin: ${name}\t${callId}\t${JSON.stringify(args)}`);
+          info(`Begin: ${name}\t${callId}\t${argsHandler(args)}`);
           const res = await fn(...args);
           info(
             `Completed: ${name}\t${callId}\t${JSON.stringify(transform(res))}`
@@ -82,7 +84,7 @@ function Logger({ errorLogPath, infoLogPath }) {
     return (...args) => {
       const callId = uuidv4();
       try {
-        info(`Begin: ${name}\t${callId}\t${JSON.stringify(args)}`);
+        info(`Begin: ${name}\t${callId}\t${argsHandler(args)}`);
         const res = fn(...args);
         info(`Completed: ${name}\t${callId}\t${JSON.stringify(res)}`);
         return res;
