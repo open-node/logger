@@ -70,9 +70,12 @@ function Logger({ errorLogPath, infoLogPath }) {
         const callId = uuidv4();
         try {
           info(`Begin: ${name}\t${callId}\t${argsHandler(args)}`);
+          const startedAt = Date.now();
           const res = await fn(...args);
           info(
-            `Completed: ${name}\t${callId}\t${JSON.stringify(transform(res))}`
+            `Completed: ${name}\t${callId}\t${Date.now() - startedAt} ms\t${JSON.stringify(
+              transform(res)
+            )}\t${Date.now() - startedAt} ms`
           );
           return res;
         } catch (e) {
@@ -85,8 +88,9 @@ function Logger({ errorLogPath, infoLogPath }) {
       const callId = uuidv4();
       try {
         info(`Begin: ${name}\t${callId}\t${argsHandler(args)}`);
+        const startedAt = Date.now();
         const res = fn(...args);
-        info(`Completed: ${name}\t${callId}\t${JSON.stringify(res)}`);
+        info(`Completed: ${name}\t${callId}\t${Date.now() - startedAt} ms\t${JSON.stringify(res)}`);
         return res;
       } catch (e) {
         info(`Error: ${name}\t${callId}\t${e.message}`, e.stack);
