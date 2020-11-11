@@ -19,6 +19,10 @@ function Logger({ errorLogPath, infoLogPath }) {
    * @return {void}
    */
   const error = (e, extra) => {
+    if (!e) {
+      console.trace("Logger.error but error is null or undefined");
+      return;
+    }
     const code = e.code || "unknown";
     const file = `${errorLogPath}/${code}.err`;
     const content = [now(), e.message];
@@ -62,7 +66,7 @@ function Logger({ errorLogPath, infoLogPath }) {
     name,
     isAsync = true,
     transform = x => x,
-    errorHandler = e => e.message,
+    errorHandler = e => e && e.message,
     argsHandler = JSON.stringify
   ) => {
     if (isAsync) {
