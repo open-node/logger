@@ -26,6 +26,7 @@ function Logger({ errorLogPath, infoLogPath }) {
     const code = e.code || "unknown";
     const file = `${errorLogPath}/${code}.err`;
     const content = [now(), e.message];
+    if (e.data) content.push(JSON.stringify(e.data));
     if (extra != null) content.push(JSON.stringify(extra));
     if (e.stack) content.push(JSON.stringify(e.stack));
     fs.appendFileSync(file, `${content.join("\t")}\n`);
@@ -77,9 +78,8 @@ function Logger({ errorLogPath, infoLogPath }) {
           const startedAt = Date.now();
           const res = await fn(...args);
           info(
-            `Completed: ${name}\t${callId}\t${Date.now() - startedAt}ms\t${JSON.stringify(
-              transform(res)
-            )}`
+            `Completed: ${name}\t${callId}\t${Date.now() -
+              startedAt}ms\t${JSON.stringify(transform(res))}`
           );
           return res;
         } catch (e) {
@@ -94,7 +94,10 @@ function Logger({ errorLogPath, infoLogPath }) {
         info(`Begin: ${name}\t${callId}\t${argsHandler(args)}`);
         const startedAt = Date.now();
         const res = fn(...args);
-        info(`Completed: ${name}\t${callId}\t${Date.now() - startedAt}ms\t${JSON.stringify(res)}`);
+        info(
+          `Completed: ${name}\t${callId}\t${Date.now() -
+            startedAt}ms\t${JSON.stringify(res)}`
+        );
         return res;
       } catch (e) {
         info(`Error: ${name}\t${callId}\t${e.message}`, e.stack);
