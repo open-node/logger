@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const Logger = require("../../");
+const _ = require("lodash");
+const Logger = require("../logger");
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -10,14 +11,14 @@ jest.mock("fs");
 
 describe("Logger module", () => {
   it("instance method", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     expect(typeof logger.info).toBe("function");
     expect(typeof logger.error).toBe("function");
     expect(typeof logger.logger).toBe("function");
   });
 
   it("info method", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     logger.info("hello");
     expect(fs.appendFileSync.mock.calls.length).toBe(1);
     const [file, line] = fs.appendFileSync.mock.calls[0];
@@ -26,7 +27,7 @@ describe("Logger module", () => {
   });
 
   it("info method, has extra", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     logger.info("hello", "world");
     expect(fs.appendFileSync.mock.calls.length).toBe(2);
     const [file, line] = fs.appendFileSync.mock.calls[1];
@@ -36,7 +37,7 @@ describe("Logger module", () => {
   });
 
   it("error method", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     logger.error(Error("hello"), "world");
     expect(fs.appendFileSync.mock.calls.length).toBe(3);
     const [file, line] = fs.appendFileSync.mock.calls[2];
@@ -46,7 +47,7 @@ describe("Logger module", () => {
   });
 
   it("error method, has extra", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     logger.error(Error("nihao"));
     expect(fs.appendFileSync.mock.calls.length).toBe(4);
     const [file, line] = fs.appendFileSync.mock.calls[3];
@@ -56,7 +57,7 @@ describe("Logger module", () => {
   });
 
   it("error method, no stack, has extra", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     logger.error({ code: "errorcode", message: "nihao" });
     expect(fs.appendFileSync.mock.calls.length).toBe(5);
     const [file, line] = fs.appendFileSync.mock.calls[4];
@@ -66,7 +67,7 @@ describe("Logger module", () => {
   });
 
   it("logger sync method, fn exec success", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     const fn = jest.fn();
     fn.mockReturnValueOnce(10);
     const fnLog = logger.logger(fn, "testing", false);
@@ -81,7 +82,7 @@ describe("Logger module", () => {
   });
 
   it("logger sync method, fn exec faild", () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     const calls = [];
     const fn = (...args) => {
       calls.push(args);
@@ -97,7 +98,7 @@ describe("Logger module", () => {
   });
 
   it("logger async method, fn exec success", async () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     const calls = [];
     const ret = "I am function return value";
     const fn = async (...args) => {
@@ -119,7 +120,7 @@ describe("Logger module", () => {
   });
 
   it("logger async method, fn exec faild", async () => {
-    const logger = new Logger({ infoLogPath, errorLogPath });
+    const logger = new Logger({ infoLogPath, errorLogPath }, { _ });
     const calls = [];
     const fn = async (...args) => {
       calls.push(args);
@@ -136,5 +137,14 @@ describe("Logger module", () => {
 
     expect(fs.appendFileSync.mock.calls.length).toBe(13);
     expect(fs.appendFileSync.mock.calls[12][1]).toMatch("wrong");
+  });
+
+  it("ignore error", async () => {
+    const logger = new Logger({ infoLogPath, errorLogPath, ignoreErrors: ["ignored"] }, { _ });
+    const error = Error("wrong");
+    error.code = "ignored";
+    logger.error(error);
+
+    expect(fs.appendFileSync.mock.calls.length).toBe(13);
   });
 });

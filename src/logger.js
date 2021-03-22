@@ -1,14 +1,20 @@
 const fs = require("fs");
 const uuidv4 = require("uuid/v4");
 
-const now = () => new Date().toISOString();
+const date = (offset = 0) => new Date(Date.now() + (offset | 0)).toISOString();
 
 /**
  * @param {Object} config 配置信息，errorLogPath, infoLogPath, 必须包含
  * @class
  * @return {Logger} Instance
  */
-function Logger({ errorLogPath, infoLogPath }) {
+function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }) {
+  const makeDir = _.memoize(dir => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+  });
+
+  const ignores = new Set(ignoreErrors);
+
   /**
    * 记录错误信息
    * @memberof Logger
@@ -23,9 +29,15 @@ function Logger({ errorLogPath, infoLogPath }) {
       console.trace("Logger.error but error is null or undefined");
       return;
     }
+    const time = date();
+    const today = time.split("T")[0];
     const code = e.code || "unknown";
-    const file = `${errorLogPath}/${code}.err`;
-    const content = [now(), e.message];
+    // 忽略某些错误
+    if (ignores.has(code)) return;
+    const dir = `${errorLogPath}/${today}`;
+    makeDir(dir);
+    const file = `${dir}/${code}.err`;
+    const content = [time, e.message];
     if (e.data) content.push(JSON.stringify(e.data));
     if (extra != null) content.push(JSON.stringify(extra));
     if (e.stack) content.push(JSON.stringify(e.stack));
@@ -42,9 +54,12 @@ function Logger({ errorLogPath, infoLogPath }) {
    * @return {void}
    */
   const info = (message, extra) => {
-    const today = now().split("T")[0];
-    const file = `${infoLogPath}/${today}.log`;
-    const content = [now(), message];
+    const time = date();
+    const today = time.split("T")[0];
+    const dir = `${infoLogPath}/${today}`;
+    makeDir(dir);
+    const file = `${dir}/info.log`;
+    const content = [time, message];
     if (extra != null) content.push(JSON.stringify(extra));
     fs.appendFileSync(file, `${content.join("\t")}\n`);
   };
@@ -78,8 +93,9 @@ function Logger({ errorLogPath, infoLogPath }) {
           const startedAt = Date.now();
           const res = await fn(...args);
           info(
-            `Completed: ${name}\t${callId}\t${Date.now() -
-              startedAt}ms\t${JSON.stringify(transform(res))}`
+            `Completed: ${name}\t${callId}\t${Date.now() - startedAt}ms\t${JSON.stringify(
+              transform(res)
+            )}`
           );
           return res;
         } catch (e) {
@@ -94,10 +110,7 @@ function Logger({ errorLogPath, infoLogPath }) {
         info(`Begin: ${name}\t${callId}\t${argsHandler(args)}`);
         const startedAt = Date.now();
         const res = fn(...args);
-        info(
-          `Completed: ${name}\t${callId}\t${Date.now() -
-            startedAt}ms\t${JSON.stringify(res)}`
-        );
+        info(`Completed: ${name}\t${callId}\t${Date.now() - startedAt}ms\t${JSON.stringify(res)}`);
         return res;
       } catch (e) {
         info(`Error: ${name}\t${callId}\t${e.message}`, e.stack);

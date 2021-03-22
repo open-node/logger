@@ -1,6 +1,7 @@
 {
   "extends": "airbnb",
-  "plugins": ["jest"],
+  "plugins": [
+  ],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 6,
@@ -10,11 +11,11 @@
     }
   },
   "env": {
-    "jest/globals": true,
     "es6": true,
     "browser": true,
     "node": true,
     "jquery": true,
+    "jest": true,
     "mocha": true
   },
   "rules": {
@@ -32,10 +33,10 @@
     "nonblock-statement-body-position": "off",
     "operator-linebreak": "off",
     "prefer-destructuring": "off",
-    "indent": "off",
+    "indent": ["error", 2],
+    "no-use-before-define": "off",
     "no-param-reassign": "off",
     "no-continue": "off",
-    "class-methods-use-this": "off",
     "no-console": 0,
     "no-debugger": 1,
     "no-var": 1,
@@ -45,6 +46,7 @@
     "no-underscore-dangle": 0,
     "no-alert": 0,
     "no-empty": 0,
+    "no-loop-func": 0,
     "no-bitwise": 0,
     "quotes": 0,
     "comma-dangle": 0,

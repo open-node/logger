@@ -1,6 +1,6 @@
 {
   "name": "@open-node/logger",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "log recorder, info and error",
   "main": "src/logger.js",
   "scripts": {
@@ -11,12 +11,19 @@
     "release": "npm run readme && npm publish --registry=https://registry.npmjs.org --access=public",
     "release:github": "npm run readme && npm publish --registry=https://npm.pkg.github.com/"
   },
-  "pre-commit": ["lint", "test"],
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/open-node/logger.git"
   },
-  "keywords": ["debugger", "log", "logger"],
+  "keywords": [
+    "debugger",
+    "log",
+    "logger"
+  ],
   "author": "Redstone Zhao",
   "license": "MIT",
   "bugs": {
@@ -24,7 +31,14 @@
   },
   "homepage": "https://github.com/open-node/logger#readme",
   "devDependencies": {
-    "jest": "^24.9.0"
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.4",
+    "jest": "^25.1.0",
+    "lodash": "^4.17.21"
   },
   "dependencies": {
     "uuid": "^3.3.3"
