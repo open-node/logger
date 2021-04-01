@@ -11,7 +11,7 @@ Record log info to logfile, info log by date, error log by error.code
 <pre>
 const Logger = require('@open-node/logger');
 
-const logger = Logger({ errorLogPath, infoLogPath });
+const logger = Logger({ errorLogPath, infoLogPath }, deps, clientId);
 </pre>
 
 
@@ -38,8 +38,8 @@ const logger = Logger({ errorLogPath, infoLogPath });
 ### Parameters
 
 -   `config` **[Object][9]** 配置信息，errorLogPath, infoLogPath, 必须包含
-    -   `config.errorLogPath`  
-    -   `config.infoLogPath`  
+    -   `config.errorLogPath`
+    -   `config.infoLogPath`
 
 Returns **[Logger][10]** Instance
 
@@ -52,7 +52,7 @@ Returns **[Logger][10]** Instance
 -   `e` **[error][11]** error对象
 -   `extra` **any?** 额外要记录的信息
 
-Returns **void** 
+Returns **void**
 
 ### info
 
@@ -63,7 +63,7 @@ Returns **void**
 -   `message` **[string][12]** 要记录的信息
 -   `extra` **any?** 额外要记录的信息
 
-Returns **void** 
+Returns **void**
 
 ### logger
 
@@ -78,7 +78,7 @@ Returns **void**
 -   `errorHandler` **[function][13]?** 错误信息处理函数 (optional, default `e=>e.message`)
 -   `argsHandler` **[function][13]?** 参数信息处理函数 (optional, default `JSON.stringify`)
 
-Returns **[function][13]** 
+Returns **[function][13]**
 
 [1]: #logger
 

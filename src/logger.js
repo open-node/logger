@@ -8,7 +8,7 @@ const date = (offset = 0) => new Date(Date.now() + (offset | 0)).toISOString();
  * @class
  * @return {Logger} Instance
  */
-function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }) {
+function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }, clientId) {
   const makeDir = _.memoize(dir => {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
   });
@@ -37,7 +37,7 @@ function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }) {
     const dir = `${errorLogPath}/${today}`;
     makeDir(dir);
     const file = `${dir}/${code}.err`;
-    const content = [time, e.message];
+    const content = [time, clientId, e.message];
     if (e.data) content.push(JSON.stringify(e.data));
     if (extra != null) content.push(JSON.stringify(extra));
     if (e.stack) content.push(JSON.stringify(e.stack));
@@ -59,7 +59,7 @@ function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }) {
     const dir = `${infoLogPath}/${today}`;
     makeDir(dir);
     const file = `${dir}/info.log`;
-    const content = [time, message];
+    const content = [time, clientId, message];
     if (extra != null) content.push(JSON.stringify(extra));
     fs.appendFileSync(file, `${content.join("\t")}\n`);
   };

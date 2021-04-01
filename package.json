@@ -1,6 +1,6 @@
 {
   "name": "@open-node/logger",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "log recorder, info and error",
   "main": "src/logger.js",
   "scripts": {
@@ -11,19 +11,12 @@
     "release": "npm run readme && npm publish --registry=https://registry.npmjs.org --access=public",
     "release:github": "npm run readme && npm publish --registry=https://npm.pkg.github.com/"
   },
-  "pre-commit": [
-    "lint",
-    "test"
-  ],
+  "pre-commit": ["lint", "test"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/open-node/logger.git"
   },
-  "keywords": [
-    "debugger",
-    "log",
-    "logger"
-  ],
+  "keywords": ["debugger", "log", "logger"],
   "author": "Redstone Zhao",
   "license": "MIT",
   "bugs": {
