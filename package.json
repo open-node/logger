@@ -1,6 +1,6 @@
 {
   "name": "@open-node/logger",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "log recorder, info and error",
   "main": "src/logger.js",
   "scripts": {

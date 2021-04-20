@@ -41,7 +41,11 @@ function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }, clientId) {
     if (e.data) content.push(JSON.stringify(e.data));
     if (extra != null) content.push(JSON.stringify(extra));
     if (e.stack) content.push(JSON.stringify(e.stack));
-    fs.appendFileSync(file, `${content.join("\t")}\n`);
+    try {
+      fs.appendFileSync(file, `${content.join("\t")}\n`);
+    } catch (err) {
+      console.error("Logger.error appendFileSync faid: %o", err);
+    }
   };
 
   /**
@@ -61,7 +65,11 @@ function Logger({ errorLogPath, infoLogPath, ignoreErrors }, { _ }, clientId) {
     const file = `${dir}/info.log`;
     const content = [time, clientId, message];
     if (extra != null) content.push(JSON.stringify(extra));
-    fs.appendFileSync(file, `${content.join("\t")}\n`);
+    try {
+      fs.appendFileSync(file, `${content.join("\t")}\n`);
+    } catch (e) {
+      console.error("Logger.info appendFileSync faid: %o", e);
+    }
   };
 
   /**
